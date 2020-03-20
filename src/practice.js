@@ -79,3 +79,62 @@ mostPopularVideosForDays(30);
 
 // Assignment drills begin below this point
 
+//1:  Get all items that contain text
+
+function searchByText(searchTerm) {
+  knexInstance
+    .select('id', 'name', 'price', 'category')
+    .from('shopping_list')
+    .where('name', 'ILIKE', `%${searchTerm}%`)
+    .then(result => {
+      console.log(result);
+    });
+}
+
+searchByText('steak');
+
+//2: Get all items paginated
+
+function paginateItems(pageNumber) {
+  const perPage = 6;
+  const offset = perPage * (pageNumber - 1);
+  knexInstance
+    .select('id', 'name', 'price', 'category')
+    .from('shopping_list')
+    .limit(perPage)
+    .offset(offset)
+    .then(result => {
+      console.log(result);
+    });
+}
+
+paginateItems(3);
+
+//3: Get all items added after date
+
+function addedAfterDate(daysAgo) {
+  knexInstance
+    .select('id', 'name', 'price', 'date_added', 'category')
+    .from('shopping_list')
+    .where('date_added', '>', knexInstance.raw('now() - \'?? days\':: INTERVAL', daysAgo))
+    .then(result => {
+      console.log(result);
+    });
+}
+
+addedAfterDate(4);
+
+//4: Get total cost for each category
+
+function totalCost() {
+  knexInstance
+    .select('category')
+    .sum('price AS total')
+    .from('shopping_list')
+    .groupBy('category')
+    .then(result => {
+      console.log(result);
+    });
+}
+
+totalCost();
